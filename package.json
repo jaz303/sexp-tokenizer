@@ -1,6 +1,6 @@
 {
   "name": "sexp-tokenizer",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Streaming s-expression tokenizer",
   "main": "index.js",
   "directories": {
