@@ -13,7 +13,7 @@ Into a stream of these:
     "bar"
     sexp.OPEN
     "baz"
-    "a string with spaces and \"quote\""
+    "a string with spaces and \"quotes\""
     1
     2
     3
@@ -26,7 +26,7 @@ Into a stream of these:
   * string - a double or single quoted string. Slash-escaping is supported for `'`, `"`, `\r`, `\n` and `\t`
   * symbol - any series of non-space, non-paren characters that is neither a number nor a symbol
 
-For each type of atom, a translation function can be assigned for managing the values `sexp-tokenizer` produces (see API, below).
+For each type of atom, a translation function can be assigned for managing the emitted values (see API, below).
 
 ## Installation
 
@@ -35,7 +35,7 @@ For each type of atom, a translation function can be assigned for managing the v
 ## Usage
 
     var fs = require('fs');
-    var sexp = require('sexp');
+    var sexp = require('sexp-tokenizer');
 
     fs.createReadStream('foo.sexp', {encoding: 'utf8'})
       .pipe(sexp())
