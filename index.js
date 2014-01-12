@@ -46,15 +46,13 @@ function SexpStream(options) {
     Transform.call(this, options);
     
     this._remain = '';
-    this._pending = [];
 
 }
 
-SexpStream.prototype._transform = function(chunk, encoding, callback) {
-    
-    this._remain += chunk;
-    this._pending.push(callback);
+SexpStream.prototype._transform = function(chunk, encoding, done) {
 
+    this._remain += chunk;
+    
     var match, len;
 
     while (this._remain.length) {
@@ -84,14 +82,17 @@ SexpStream.prototype._transform = function(chunk, encoding, callback) {
             } else if ((match = STRING.exec(this._remain))) {
                 this.push(this._txString(decodeString(match[0])));
                 len = match[0].length;
+            } else {
+                break;
             }
         }
         this._remain = this._remain.slice(len);
     }
 
-    if (this._remain.length === 0) {
-        this._pending.forEach(function(p) { p(); });
-        this._pending.splice(0, this._pending.length);
-    }
+    done();
 
+};
+
+SexpStream.prototype._flush = function(cb) {
+    cb(this._remain.length ? new Error("unexpected EOF") : null);
 };
