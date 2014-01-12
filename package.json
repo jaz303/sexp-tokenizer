@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/jaz303/sexp-tokenizer",
   "devDependencies": {
-    "tape": "~1.0.4"
+    "tape": "~1.0.4",
+    "tape-readable-seq": "0.0.1"
   },
   "keywords": [
     "sexp",

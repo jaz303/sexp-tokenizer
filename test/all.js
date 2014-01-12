@@ -1,10 +1,14 @@
-var test = require('tape');
-var fs   = require('fs');
-var sexp = require('../');
+var test    = require('tape');
+var fs      = require('fs');
+var sexp    = require('../');
+var testSeq = require('tape-readable-seq');
 
 test("tokenizer", function(assert) {
 
-    var expect = [
+    var stream = fs.createReadStream(__dirname + '/input.sexp', {encoding: 'utf8'})
+                    .pipe(sexp());
+
+    testSeq(stream, [
         sexp.OPEN,
         'foo',
         'bar',
@@ -21,42 +25,37 @@ test("tokenizer", function(assert) {
         '-',
         'splat',
         sexp.CLOSE
-    ];
-
-    var ix = 0;
-
-    assert.plan(expect.length);
-
-    fs.createReadStream(__dirname + '/input.sexp', {encoding: 'utf8'})
-        .pipe(sexp())
-        .on('data', function(obj) {
-            assert.equal(obj, expect[ix++]);
-        });
+    ])(assert);
 
 });
 
 test("translation", function(assert) {
 
-    var expect = [
+    var stream = fs.createReadStream(__dirname + '/translate.sexp', {encoding: 'utf8'})
+                    .pipe(sexp({
+                        translateSymbol: function() { return 'symbol'; },
+                        translateString: function() { return 'string'; },
+                        translateNumber: function() { return 'number'; }
+                    }));
+
+    testSeq(stream, [
         sexp.OPEN,
         'symbol',
         'string',
         'number',
         sexp.CLOSE
-    ];
+    ])(assert);
 
-    var ix = 0;
+});
 
-    assert.plan(expect.length);
+test("error", function(assert) {
 
-    fs.createReadStream(__dirname + '/translate.sexp', {encoding: 'utf8'})
-        .pipe(sexp({
-            translateSymbol: function() { return 'symbol'; },
-            translateString: function() { return 'string'; },
-            translateNumber: function() { return 'number'; }
-        }))
-        .on('data', function(obj) {
-            assert.equal(obj, expect[ix++]);
-        });    
+    assert.plan(1);
+
+    fs.createReadStream(__dirname + '/error.sexp', {encoding: 'utf8'})
+        .pipe(sexp())
+        .on('error', function() {
+            assert.ok(true);
+        })
 
 });
