@@ -11,7 +11,8 @@ var OPEN    = module.exports.OPEN   = {},
 var SPACE   = /^[ \r\n\t]+/,
     NUMBER  = /^-?\d+(?:\.\d+)?/,
     ATOM    = /^[^\(\)'"\r\n\t ]+/,
-    STRING  = /^("(?:\\[rnt\\'"]|[^\\"])*"|'(?:\\[rnt\\'"]|[^\\'])*')/;
+    STRING  = /^("(?:\\[rnt\\'"]|[^\\"])*"|'(?:\\[rnt\\'"]|[^\\'])*')/,
+    COMMENT = /^;;.*/;
 
 //
 // helpers
@@ -46,7 +47,6 @@ function SexpStream(options) {
     Transform.call(this, options);
     
     this._remain = '';
-
 }
 
 SexpStream.prototype._transform = function(chunk, encoding, done) {
@@ -62,7 +62,7 @@ SexpStream.prototype._transform = function(chunk, encoding, done) {
         } else if (this._remain[0] === ')') {
             this.push(CLOSE);
             len = 1;
-        } else if ((match = SPACE.exec(this._remain))) {
+        } else if (match = SPACE.exec(this._remain) || COMMENT.exec(this._remain)) {
             len = match[0].length;
         } else {
             if ((match = NUMBER.exec(this._remain))) {
