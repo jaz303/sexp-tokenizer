@@ -59,3 +59,62 @@ test("error", function(assert) {
         })
 
 });
+
+test.only("comment", function(assert) {
+
+   var stream = fs.createReadStream(__dirname + '/comment.wast', {encoding: 'utf8'})
+                    .pipe(sexp());
+
+     testSeq(stream, [
+        sexp.OPEN,
+        'module',
+        sexp.OPEN,
+        'import',
+        '$gasUsed',
+        'ethereum',
+        'gasUsed',
+        sexp.OPEN,
+        'result',
+        'i64',
+        sexp.CLOSE,
+        sexp.CLOSE,
+        sexp.OPEN,
+        'export',
+        'test',
+        0,
+        sexp.CLOSE,
+        sexp.OPEN,
+        'func',
+        sexp.OPEN,
+        'result',
+        'i32',
+        sexp.CLOSE,
+        sexp.OPEN,
+        'block',
+        sexp.OPEN,
+        'if',
+        sexp.OPEN,
+        'i64.eq',
+        sexp.OPEN,
+        'call_import',
+        '$gasUsed',
+        sexp.CLOSE,
+        sexp.OPEN,
+        'i64.const',
+        5,
+        sexp.CLOSE,
+        sexp.CLOSE,
+        sexp.OPEN,
+        'br',
+        0,
+        sexp.CLOSE,
+        sexp.CLOSE,
+        sexp.OPEN,
+        'unreachable',
+        sexp.CLOSE,
+        sexp.CLOSE,
+        sexp.CLOSE,
+        sexp.CLOSE
+      ])(assert);
+
+});
